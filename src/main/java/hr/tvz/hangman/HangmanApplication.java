@@ -12,7 +12,7 @@ public class HangmanApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(HangmanApplication.class.getResource("hangman-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1200, 800);
-        stage.setTitle("Hangman");
+        stage.setTitle("Hangman!");
         stage.setScene(scene);
         stage.show();
     }
