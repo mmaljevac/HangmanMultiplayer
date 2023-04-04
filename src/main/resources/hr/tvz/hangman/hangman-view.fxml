@@ -1,16 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
-
 <?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="hr.tvz.hangman.HangmanController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-    </padding>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-    <Label fx:id="welcomeText"/>
-    <Button text="Hello!" onAction="#onHelloButtonClick"/>
-</VBox>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1200.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="New game">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Start" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Game">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Save game" />
+                  <MenuItem mnemonicParsing="false" text="Load game" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Documentation">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Generate" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Text layoutX="518.0" layoutY="115.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Hangman" textAlignment="CENTER">
+         <font>
+            <Font name="Marlett" size="38.0" />
+         </font>
+      </Text>
+      <ImageView fx:id="imageView" fitHeight="500.0" fitWidth="500.0" layoutX="98.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true" />
+      <Button fx:id="myButton" layoutX="861.0" layoutY="388.0" mnemonicParsing="false" text="Button" />
+   </children>
+</AnchorPane>
