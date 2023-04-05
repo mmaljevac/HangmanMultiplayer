@@ -42,16 +42,31 @@
          <image>
             <Image url="@img/6.png" />
          </image></ImageView>
-      <Button fx:id="myButton" layoutX="887.0" layoutY="388.0" mnemonicParsing="false" onAction="#update" text="Button" />
-      <Text fx:id="numTriesText" layoutX="613.0" layoutY="405.0" strokeType="OUTSIDE" strokeWidth="0.0" text="numTriesText">
+      <Button fx:id="submitButton" layoutX="887.0" layoutY="388.0" mnemonicParsing="false" onAction="#enterLetter" text="Check" />
+      <Text fx:id="livesText" layoutX="613.0" layoutY="405.0" strokeType="OUTSIDE" strokeWidth="0.0" text="livesText">
          <font>
             <Font size="23.0" />
          </font>
       </Text>
-      <TextField fx:id="letter" layoutX="887.0" layoutY="291.0" prefHeight="67.0" prefWidth="88.0" promptText="_">
+      <TextField fx:id="letter" layoutX="887.0" layoutY="291.0" onAction="#enterLetter" prefHeight="67.0" prefWidth="88.0" promptText="_">
          <font>
             <Font size="34.0" />
          </font>
       </TextField>
+      <Text layoutX="887.0" layoutY="256.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Letter:">
+         <font>
+            <Font size="22.0" />
+         </font>
+      </Text>
+      <Text fx:id="wordText" layoutX="887.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="word">
+         <font>
+            <Font size="31.0" />
+         </font>
+      </Text>
+      <Text fx:id="secretWordText" layoutX="887.0" layoutY="482.0" strokeType="OUTSIDE" strokeWidth="0.0" text="secretWordText">
+         <font>
+            <Font size="25.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>
