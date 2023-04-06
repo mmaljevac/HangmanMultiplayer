@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 @Getter
 @Setter
 public class HangmanController implements Initializable {
-    private final Integer MAX_LIVES = 10;
+    private final Integer MAX_LIVES = 6;
     private final String SAVE_GAME_FILE_NAME = "hangmanSave.bin";
     private Boolean gameOver;
     private Integer lives;
@@ -51,8 +51,7 @@ public class HangmanController implements Initializable {
         lives = MAX_LIVES;
         livesText.setText(lives.toString());
 
-        Image image = new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + MAX_LIVES + ".png"));
-        imageView.setImage(image);
+        imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
 
 
 //        TextInputDialog dialog = new TextInputDialog();
@@ -125,8 +124,8 @@ public class HangmanController implements Initializable {
             if (lives > 0) {
                 lives--;
                 livesText.setText(lives.toString());
-                Image image = new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png"));
-                imageView.setImage(image);
+                imageView.setImage(
+                        new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
             }
         }
 
@@ -156,6 +155,25 @@ public class HangmanController implements Initializable {
             showMessage("Error :(", "");
             throw new RuntimeException(e);
         }
+    }
+
+    public void loadGame() {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_GAME_FILE_NAME));
+            if (ois.readObject() instanceof GameState gs) {
+                gameOver = gs.getGameOver();
+                lives = gs.getLives();
+                livesText.setText(lives.toString());
+                guessedWordText.setText(gs.getGuessedWord());
+                imageView.setImage(
+                        new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
+            }
+            showMessage("Game loaded!", "");
+        } catch (IOException | ClassNotFoundException e) {
+            showMessage("Error :(", "");
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void showMessage(String header, String content) {
