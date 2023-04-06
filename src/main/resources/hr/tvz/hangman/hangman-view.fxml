@@ -27,12 +27,12 @@
         <menus>
           <Menu mnemonicParsing="false" text="New game">
             <items>
-              <MenuItem mnemonicParsing="false" text="Start" />
+              <MenuItem mnemonicParsing="false" onAction="#newGame" text="Start" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Game">
             <items>
-              <MenuItem mnemonicParsing="false" text="Save game" />
+              <MenuItem mnemonicParsing="false" onAction="#saveGame" text="Save game" />
                   <MenuItem mnemonicParsing="false" text="Load game" />
             </items>
           </Menu>
@@ -43,7 +43,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Text layoutX="464.0" layoutY="128.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" text="Hangman" textAlignment="CENTER">
+      <Text layoutX="463.0" layoutY="159.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" text="Hangman" textAlignment="CENTER">
          <font>
             <Font name="Centaur" size="75.0" />
          </font>
@@ -57,7 +57,7 @@
                   </Stop>
                   <Stop offset="1.0">
                      <color>
-                        <Color red="1.0" green="1.0" blue="1.0" />
+                        <Color red="1.0" green="1.0" blue="1.0" opacity="0.0" />
                      </color>
                   </Stop>
                </stops>
@@ -68,19 +68,14 @@
          <image>
             <Image url="@img/6.png" />
          </image></ImageView>
-      <Button fx:id="submitButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="679.0" layoutY="449.0" mnemonicParsing="false" onAction="#enterLetter" prefHeight="65.0" prefWidth="199.0" text="Check">
+      <Button fx:id="submitButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="679.0" layoutY="488.0" mnemonicParsing="false" onAction="#enterLetter" prefHeight="65.0" prefWidth="199.0" text="Check">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <Text fx:id="livesText" layoutX="255.0" layoutY="725.0" strokeType="OUTSIDE" strokeWidth="0.0" text="livesText" textAlignment="CENTER">
-         <font>
-            <Font size="29.0" />
-         </font>
-      </Text>
-      <TextField fx:id="letterField" alignment="CENTER" layoutX="795.0" layoutY="316.0" onAction="#enterLetter" prefHeight="72.0" prefWidth="72.0">
+      <TextField fx:id="letterField" alignment="CENTER" layoutX="795.0" layoutY="364.0" onAction="#enterLetter" prefHeight="72.0" prefWidth="72.0" promptText="_">
          <font>
             <Font size="34.0" />
          </font>
@@ -95,19 +90,29 @@
             </InnerShadow>
          </effect>
       </TextField>
-      <Text layoutX="679.0" layoutY="365.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Letter:" wrappingWidth="116.0">
+      <Text layoutX="675.0" layoutY="415.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Letter:" wrappingWidth="116.0">
          <font>
             <Font size="32.0" />
          </font>
       </Text>
-      <Text fx:id="wordText" layoutX="789.0" layoutY="718.0" strokeType="OUTSIDE" strokeWidth="0.0" text="word" textAlignment="CENTER">
+      <Text fx:id="wordText" layoutX="563.0" layoutY="753.0" strokeType="OUTSIDE" strokeWidth="0.0" text="word" textAlignment="CENTER">
          <font>
             <Font size="31.0" />
          </font>
       </Text>
-      <Text fx:id="guessedWordText" layoutX="679.0" layoutY="242.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="__secretWordText__">
+      <Text fx:id="guessedWordText" layoutX="679.0" layoutY="295.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="__secretWordText__">
          <font>
             <Font size="31.0" />
+         </font>
+      </Text>
+      <Text fx:id="livesText" layoutX="319.0" layoutY="619.0" strokeType="OUTSIDE" strokeWidth="0.0" text="lives">
+         <font>
+            <Font size="30.0" />
+         </font>
+      </Text>
+      <Text layoutX="235.0" layoutY="618.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lives:">
+         <font>
+            <Font size="30.0" />
          </font>
       </Text>
    </children>
