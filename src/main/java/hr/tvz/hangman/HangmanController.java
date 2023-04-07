@@ -3,30 +3,20 @@ package hr.tvz.hangman;
 import hr.tvz.hangman.model.GameState;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
-import lombok.*;
 
 import java.io.*;
-import java.net.URL;
-import java.util.ResourceBundle;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class HangmanController implements Initializable {
-    private final Integer MAX_LIVES = 6;
-    private final String SAVE_GAME_FILE_NAME = "hangmanSave.bin";
-    private Boolean gameOver;
-    private Integer lives;
+public class HangmanController {
+    private static final Integer MAX_LIVES = 6;
+    private static final String SAVE_GAME_FILE_NAME = "hangmanSave.bin";
+    private static Boolean gameOver;
+    private static Integer lives;
     @FXML
     private Text wordText;
     @FXML
@@ -36,13 +26,9 @@ public class HangmanController implements Initializable {
     @FXML
     private TextField letterField;
     @FXML
-    //TODO to be replaced with images
     private Text livesText;
-    @FXML
-    private Button submitButton;
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    public void initialize() {
         newGame();
     }
 
@@ -52,7 +38,6 @@ public class HangmanController implements Initializable {
         livesText.setText(lives.toString());
 
         imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
-
 
 //        TextInputDialog dialog = new TextInputDialog();
 //        dialog.setTitle("Input Dialog");
@@ -70,8 +55,7 @@ public class HangmanController implements Initializable {
         for (int i = 0; i < word.length(); i++) {
             if (word.charAt(i) == ' ') {
                 secretWord += " ";
-            }
-            else {
+            } else {
                 secretWord += "*";
             }
         }
@@ -119,8 +103,7 @@ public class HangmanController implements Initializable {
                     guessedWordText.setText(newSecretWord);
                 }
             }
-        }
-        else {
+        } else {
             if (lives > 0) {
                 lives--;
                 livesText.setText(lives.toString());
@@ -128,8 +111,6 @@ public class HangmanController implements Initializable {
                         new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
             }
         }
-
-
     }
 
     public void checkWin() {
@@ -173,7 +154,6 @@ public class HangmanController implements Initializable {
             showMessage("Error :(", "");
             throw new RuntimeException(e);
         }
-
     }
 
     public void showMessage(String header, String content) {
@@ -192,5 +172,9 @@ public class HangmanController implements Initializable {
         if (alert.showAndWait().get() == ButtonType.OK) {
             newGame();
         }
+    }
+
+    public void generateDocumentation() {
+
     }
 }
