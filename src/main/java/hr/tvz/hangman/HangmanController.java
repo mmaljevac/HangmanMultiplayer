@@ -3,14 +3,20 @@ package hr.tvz.hangman;
 import hr.tvz.hangman.model.GameState;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.io.*;
+import java.util.Objects;
 
 public class HangmanController {
     private static final Integer MAX_LIVES = 6;
@@ -174,7 +180,11 @@ public class HangmanController {
         }
     }
 
-    public void generateDocumentation() {
-
+    public void generateDocumentation(ActionEvent event) throws IOException {
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("documentation-view.fxml")));
+        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }
