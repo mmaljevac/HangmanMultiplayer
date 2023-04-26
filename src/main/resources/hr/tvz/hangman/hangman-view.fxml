@@ -23,6 +23,7 @@
             <Image url="@img/background.png" />
          </image>
       </ImageView>
+<!--      <fx:include source="menu.fxml" />-->
       <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1200.0">
         <menus>
           <Menu mnemonicParsing="false" text="New game">
