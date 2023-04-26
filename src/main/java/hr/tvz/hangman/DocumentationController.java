@@ -102,19 +102,19 @@ public class DocumentationController implements Initializable {
                     stringBuilder.append(superclass);
                     stringBuilder.append("</h3>");
 
-                    stringBuilder.append("<h2> Constructors: </h2>");
+                    stringBuilder.append("<h2> CONSTRUCTORS </h2>");
                     for (Constructor c : constructors) {
                         stringBuilder.append("<h3>");
                         stringBuilder.append(c.getName());
                         stringBuilder.append("</h3>");
                     }
-                    stringBuilder.append("<h2> Methods: </h2>");
+                    stringBuilder.append("<h2> METHODS </h2>");
                     for (Method m : methods){
                         stringBuilder.append("<h4>");
                         stringBuilder.append(m.getName());
                         stringBuilder.append("() </h4>");
                     }
-                    stringBuilder.append("<h2> Fields: </h2>");
+                    stringBuilder.append("<h2> FIELDS </h2>");
                     for (Field f : fields){
                         stringBuilder.append("<h4>");
                         stringBuilder.append(f.getName());
