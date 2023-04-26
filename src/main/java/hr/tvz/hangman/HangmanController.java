@@ -182,9 +182,9 @@ public class HangmanController {
 
     public void generateDocumentation(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("documentation-view.fxml")));
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        Stage stage = new Stage();
+        stage.setTitle("Documentation");
+        stage.setScene(new Scene(root, 600, 600));
         stage.show();
     }
 }

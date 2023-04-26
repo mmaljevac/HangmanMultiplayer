@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 import java.util.stream.Stream;
 
 public class DocumentationController implements Initializable {
+    private final String FILE_PATH = "src/main/resources/file.html";
     @FXML
     private WebView webView;
     private WebEngine engine;
@@ -43,16 +44,8 @@ public class DocumentationController implements Initializable {
     }
 
     public void loadPage(){
-        File f = new File("src/main/resources/file.html");
+        File f = new File(FILE_PATH);
         engine.load(f.toURI().toString());
-    }
-
-    public void StartTheGame(ActionEvent event) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("hangman-view")));
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
     }
 
     public void generate() {
@@ -61,27 +54,18 @@ public class DocumentationController implements Initializable {
         List<Path> classFilePaths = new ArrayList<>();
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("<html><head><title>Hangman</title><link rel='stylesheet' href='file.css'></head>");
-
-        String bodyStart = "<body><h1>Documentation for Hangman</h1><br><br>";
-
-        stringBuilder.append(bodyStart);
-
+        stringBuilder.append("<html><head><title>Documentation</title></head>");
+        stringBuilder.append("<body><h1>Documentation for Hangman!</h1>");
 
         try (Stream<Path> stream = Files.walk(start)) {
             classFilePaths.addAll(stream.toList());
         } catch (IOException e) {
-            prikaziPoruku("Došlo je do pogreške u radu aplikacije!" +
-                    e.getMessage());
+            e.printStackTrace();
         }
 
         for (Path path : classFilePaths) {
 
-            //System.out.println("FileName: " + path.getFileName());
-
             String className = path.getFileName().toString();
-
-            String classPathName = path.getFileName().toString();
 
             List<String> pathElements = new ArrayList<>();
             path.forEach(p -> pathElements.add(p.toString()));
@@ -91,22 +75,16 @@ public class DocumentationController implements Initializable {
                 stringBuilder.append("<h2> Class: ");
                 stringBuilder.append(path.getFileName());
                 stringBuilder.append("</h2>");
-                try {
-                    /*
-                    System.out.println("Path elements: ");
-                    pathElements.forEach(System.out::println);
-                    */
-                    String packageName = "";
 
+                try {
+                    String packageName = "";
                     Boolean startPackage = false;
 
                     for (String pathElement : pathElements) {
-
                         if (startPackage) {
                             packageName += pathElement + ".";
                             continue;
                         }
-
                         if (!pathElement.equals("classes")) {
                             continue;
                         } else {
@@ -124,20 +102,21 @@ public class DocumentationController implements Initializable {
                     stringBuilder.append(superclass);
                     stringBuilder.append("</h3>");
 
+                    stringBuilder.append("<h2> Constructors: </h2>");
                     for (Constructor c : constructors) {
-                        stringBuilder.append("<h3> Constructor: ");
+                        stringBuilder.append("<h3>");
                         stringBuilder.append(c.getName());
                         stringBuilder.append("</h3>");
                     }
                     stringBuilder.append("<h2> Methods: </h2>");
-                    for(Method m : methods){
-                        stringBuilder.append("<h4> Method: ");
+                    for (Method m : methods){
+                        stringBuilder.append("<h4>");
                         stringBuilder.append(m.getName());
-                        stringBuilder.append("</h4>");
+                        stringBuilder.append("() </h4>");
                     }
                     stringBuilder.append("<h2> Fields: </h2>");
-                    for(Field f : fields){
-                        stringBuilder.append("<h4> Field: ");
+                    for (Field f : fields){
+                        stringBuilder.append("<h4>");
                         stringBuilder.append(f.getName());
                         stringBuilder.append("</h4>");
                     }
@@ -148,22 +127,14 @@ public class DocumentationController implements Initializable {
             }
         }
 
-        String bodyEnd = "</body></html>";
-        stringBuilder.append(bodyEnd);
-        String filePath = "src/main/resources/file.html";
+        stringBuilder.append("</body></html>");
 
         try {
-            FileWriter fileWriter = new FileWriter(filePath);
+            FileWriter fileWriter = new FileWriter(FILE_PATH);
             fileWriter.write(stringBuilder.toString());
             fileWriter.close();
-            //System.out.println("HTML file generated successfully.");
         } catch (IOException e) {
-            System.out.println("An error occurred while generating the HTML file.");
             e.printStackTrace();
         }
-    }
-
-    private void prikaziPoruku(String a){
-
     }
 }
