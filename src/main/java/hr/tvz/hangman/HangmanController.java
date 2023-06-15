@@ -62,15 +62,15 @@ public class HangmanController {
 
         wordText.setText(word.toUpperCase());
 
-        String secretWord = "";
+        StringBuilder secretWord = new StringBuilder();
         for (int i = 0; i < word.length(); i++) {
             if (word.charAt(i) == ' ') {
-                secretWord += " ";
+                secretWord.append(" ");
             } else {
-                secretWord += "*";
+                secretWord.append("*");
             }
         }
-        guessedWordText.setText(secretWord);
+        guessedWordText.setText(secretWord.toString());
     }
 
     @FXML

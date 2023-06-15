@@ -1,25 +1,25 @@
-package hr.tvz.hangman.networking;
+package hr.tvz.hangman.chatyt;
 
 import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-import static hr.tvz.hangman.networking.Server.HOST;
-import static hr.tvz.hangman.networking.Server.PORT;
+import static hr.tvz.hangman.chatyt.ServerYT.HOST;
+import static hr.tvz.hangman.chatyt.ServerYT.PORT;
 
 public class Client {
 
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    private String playerName;
+    private String username;
 
-    public Client(Socket socket, String playerName) {
+    public Client(Socket socket, String username) {
         try {
             this.socket = socket;
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            this.playerName = playerName;
+            this.username = username;
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
@@ -27,14 +27,14 @@ public class Client {
 
     public void sendMessage() {
         try {
-            bufferedWriter.write(playerName);
+            bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
 
             Scanner scanner = new Scanner(System.in);
             while (socket.isConnected()) {
                 String messageToSend = scanner.nextLine();
-                bufferedWriter.write(playerName + ": " + messageToSend);
+                bufferedWriter.write(username + ": " + messageToSend);
                 bufferedWriter.newLine();
                 bufferedWriter.flush();
             }
@@ -76,7 +76,7 @@ public class Client {
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your username for the group chat: ");
+        System.out.println("Enter your username: ");
         String username = scanner.nextLine();
         Socket socket = new Socket(HOST, PORT);
         Client client = new Client(socket, username);

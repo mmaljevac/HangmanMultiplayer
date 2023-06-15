@@ -102,7 +102,7 @@
             <Font size="31.0" />
          </font>
       </Text>
-      <Text fx:id="guessedWordText" layoutX="487.0" layoutY="296.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="__secretWordText__">
+      <Text fx:id="guessedWordText" layoutX="487.0" layoutY="296.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting...">
          <font>
             <Font size="31.0" />
          </font>
@@ -117,11 +117,11 @@
             <Font size="30.0" />
          </font>
       </Text>
-      <TextField fx:id="messageField" layoutX="830.0" layoutY="695.0" prefHeight="25.0" prefWidth="327.0">
+      <TextField fx:id="messageField" layoutX="845.0" layoutY="698.0" prefHeight="25.0" prefWidth="327.0">
          <font>
             <Font size="14.0" />
          </font>
       </TextField>
-      <TextArea fx:id="chatArea" editable="false" layoutX="830.0" layoutY="116.0" prefHeight="573.0" prefWidth="327.0" />
+      <TextArea fx:id="chatArea" editable="false" layoutX="845.0" layoutY="113.0" prefHeight="573.0" prefWidth="327.0" />
    </children>
 </AnchorPane>

@@ -1,17 +1,16 @@
-package hr.tvz.hangman.networking;
+package hr.tvz.hangman.chatyt;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Server {
-
+public class ServerYT {
     public static final String HOST = "localhost";
     public static final int PORT = 1234;
 
     private final ServerSocket serverSocket;
 
-    public Server(ServerSocket serverSocket) {
+    public ServerYT(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }
 
@@ -19,8 +18,8 @@ public class Server {
         try {
             while(!serverSocket.isClosed()) {
                 Socket socket = serverSocket.accept();
-                System.out.println("A new player has connected!");
-                ClientHandler clientHandler = new ClientHandler(socket);
+                System.out.println("A new client has connected!");
+                ClientHandlerYT clientHandler = new ClientHandlerYT(socket);
 
                 Thread thread = new Thread(clientHandler);
                 thread.start();
@@ -42,8 +41,7 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = new ServerSocket(PORT);
-        Server server = new Server(serverSocket);
+        ServerYT server = new ServerYT(serverSocket);
         server.startServer();
     }
-
 }

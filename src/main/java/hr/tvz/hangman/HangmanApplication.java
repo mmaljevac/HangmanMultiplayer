@@ -1,17 +1,11 @@
 package hr.tvz.hangman;
 
-import hr.tvz.hangman.model.ClientData;
-import hr.tvz.hangman.networking.Server;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.Optional;
 
 public class HangmanApplication extends Application {
     public static String clientName;
