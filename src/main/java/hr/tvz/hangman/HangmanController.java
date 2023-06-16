@@ -2,6 +2,7 @@ package hr.tvz.hangman;
 
 import hr.tvz.hangman.rmi.ChatMessage;
 import hr.tvz.hangman.model.GameState;
+import hr.tvz.hangman.rmi.RefreshChatMessagesThread;
 import hr.tvz.hangman.rmi.RemoteService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -17,7 +18,10 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +43,8 @@ public class HangmanController {
     @FXML
     private ImageView imageView;
     @FXML
+    private Text letterLabel;
+    @FXML
     private TextField letterField;
     @FXML
     private Button submitButton;
@@ -58,6 +64,8 @@ public class HangmanController {
     private static Boolean isConn = false;
     @FXML
     private TextField setWordField;
+    @FXML
+    private Label wordToGuessLabel;
 
     private RemoteService service;
     @FXML
@@ -66,14 +74,15 @@ public class HangmanController {
 
     public void initialize() {
 
-
-
         gameOver = false;
         lives = MAX_LIVES;
         livesText.setText(lives.toString());
 
-        letterField.setVisible(true);
-        submitButton.setVisible(true);
+        wordText.setVisible(false);
+
+        letterLabel.setVisible(false);
+        letterField.setVisible(false);
+        submitButton.setVisible(false);
 
         imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
 
@@ -143,9 +152,6 @@ public class HangmanController {
         lives = MAX_LIVES;
         livesText.setText(lives.toString());
 
-        letterField.setVisible(true);
-        submitButton.setVisible(true);
-
         imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
 
         String word = "Waiting...";
@@ -154,6 +160,11 @@ public class HangmanController {
         guessedWordText.setText(word.toString());
 
         setWordField.setVisible(true);
+        wordToGuessLabel.setVisible(true);
+
+        letterLabel.setVisible(false);
+        letterField.setVisible(false);
+        submitButton.setVisible(false);
     }
 
     public void checkLetter(String enteredLetter) {
@@ -194,7 +205,7 @@ public class HangmanController {
     public void checkWin() {
         if (wordText.getText().equals(guessedWordText.getText())) {
             gameOver = true;
-            showConfirmation("You won!", "Start a new game?");
+            Platform.runLater(() -> showConfirmation("You won!", "Start a new game?"));
         }
     }
 
@@ -322,6 +333,7 @@ public class HangmanController {
 
     private void handleEnteredWord() throws IOException {
         setWordField.setVisible(false);
+        wordToGuessLabel.setVisible(false);
 
         var enteredWordTemp = bufferedReader.readLine();
         StringBuilder secretWord = new StringBuilder();
@@ -334,6 +346,10 @@ public class HangmanController {
         }
         wordText.setText(enteredWordTemp.toUpperCase());
         guessedWordText.setText(secretWord.toString().toUpperCase());
+
+        letterLabel.setVisible(true);
+        letterField.setVisible(true);
+        submitButton.setVisible(true);
     }
 
     private void handleEnteredLetter() throws IOException {
@@ -347,7 +363,7 @@ public class HangmanController {
 
         if (lives == 0) {
             gameOver = true;
-            showConfirmation("You lost!", "Start a new game?");
+            Platform.runLater(() -> showConfirmation("You lost!", "Start a new game?"));
         }
 
         System.out.println(enteredLetterTemp + " in handleEnteredLetter()");
@@ -360,9 +376,6 @@ public class HangmanController {
         lives = MAX_LIVES;
         livesText.setText(lives.toString());
 
-        letterField.setVisible(true);
-        submitButton.setVisible(true);
-
         imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
 
         String word = "Waiting...";
@@ -371,6 +384,11 @@ public class HangmanController {
         guessedWordText.setText(word.toString());
 
         setWordField.setVisible(true);
+        wordToGuessLabel.setVisible(true);
+
+        letterLabel.setVisible(false);
+        letterField.setVisible(false);
+        submitButton.setVisible(false);
     }
 
     private void handleLoadGame() {
@@ -461,9 +479,11 @@ public class HangmanController {
         }
         setWordField.clear();
 
+        letterLabel.setVisible(false);
         letterField.setVisible(false);
         submitButton.setVisible(false);
         setWordField.setVisible(false);
+        wordToGuessLabel.setVisible(false);
     }
 
     public void enterLetter() {
