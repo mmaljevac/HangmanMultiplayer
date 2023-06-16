@@ -19,6 +19,7 @@ public class ClientHandler implements Runnable {
             this.username = bufferedReader.readLine();
             clientHandlers.add(this);
             broadcastMessage("SERVER: " + username + " has entered the game!");
+            broadcastMessage("conn");
         } catch (IOException e) {
             closeEverything(socket, bufferedReader, bufferedWriter);
         }
@@ -43,7 +44,7 @@ public class ClientHandler implements Runnable {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
                 //TODO remove true
-                if (!clientHandler.username.equals(username) || true) {
+                if (!clientHandler.username.equals(username)) {
                     clientHandler.bufferedWriter.write(messageToSend);
                     clientHandler.bufferedWriter.newLine();
                     clientHandler.bufferedWriter.flush();

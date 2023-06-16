@@ -22,8 +22,7 @@ public class Server {
                 System.out.println("A new player has connected!");
                 ClientHandler clientHandler = new ClientHandler(socket);
 
-                Thread thread = new Thread(clientHandler);
-                thread.start();
+                new Thread(clientHandler).start();
             }
         } catch (IOException e) {
             closeServerSocket();
@@ -42,6 +41,7 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = new ServerSocket(PORT);
+        System.err.println("Server listening on port: " + serverSocket.getLocalPort());
         Server server = new Server(serverSocket);
         server.startServer();
     }

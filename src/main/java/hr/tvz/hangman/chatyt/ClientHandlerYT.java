@@ -11,13 +11,14 @@ public class ClientHandlerYT implements Runnable {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
+    private static int playerNum = 1;
 
     public ClientHandlerYT(Socket socket) {
         try {
             this.socket = socket;
             this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
             this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            this.username = bufferedReader.readLine();
+            this.username = "Player " + playerNum++;
             clientHandlers.add(this);
             broadcastMessage("SERVER: " + username + " has entered the chat!");
         } catch (IOException e) {

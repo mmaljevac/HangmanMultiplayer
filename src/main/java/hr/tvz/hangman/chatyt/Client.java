@@ -13,6 +13,7 @@ public class Client {
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
     private String username;
+    private static int playerNum = 1;
 
     public Client(Socket socket, String username) {
         try {
@@ -27,6 +28,7 @@ public class Client {
 
     public void sendMessage() {
         try {
+
             bufferedWriter.write(username);
             bufferedWriter.newLine();
             bufferedWriter.flush();
@@ -75,9 +77,7 @@ public class Client {
     }
 
     public static void main(String[] args) throws IOException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your username: ");
-        String username = scanner.nextLine();
+        String username = "player " + playerNum;
         Socket socket = new Socket(HOST, PORT);
         Client client = new Client(socket, username);
         client.listenForMessage();

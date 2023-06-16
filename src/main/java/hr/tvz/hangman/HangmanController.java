@@ -1,26 +1,30 @@
 package hr.tvz.hangman;
 
 import hr.tvz.hangman.model.GameState;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.*;
+import java.net.Socket;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Scanner;
+
+import static hr.tvz.hangman.networking.Server.HOST;
+import static hr.tvz.hangman.networking.Server.PORT;
 
 public class HangmanController {
     private static final Integer MAX_LIVES = 6;
+
     private static final String SAVE_GAME_FILE_NAME = "hangmanSave.bin";
     private static Boolean gameOver;
     private static Integer lives;
@@ -38,9 +42,36 @@ public class HangmanController {
     public static TextArea chatArea;
     @FXML
     public static TextField messageField;
+    private Socket socket;
+
+    private BufferedReader bufferedReader;
+    private BufferedWriter bufferedWriter;
+    private static String username = "Player 1";
+    @FXML
+    private Label usernameLabel;
+    private static Boolean isConn = false;
+
 
     public void initialize() {
         newGame();
+        new Thread(() -> startClientThread()).start();
+
+        usernameLabel.setText(username);
+    }
+
+    private void startClientThread() {
+        try {
+            Socket socket = new Socket(HOST, PORT);
+
+            this.socket = socket;
+            this.bufferedReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            this.bufferedWriter = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
+
+            sendMessage();
+            listenForMessage();
+        } catch (IOException e) {
+            closeEverything(socket, bufferedReader, bufferedWriter);
+        }
     }
 
     public void newGame() {
@@ -50,6 +81,13 @@ public class HangmanController {
 
         imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
 
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Input Dialog");
+        dialog.setHeaderText("Enter username:");
+
+        Optional<String> usernameOptional = dialog.showAndWait();
+        username = usernameOptional.orElse("");
+
 //        TextInputDialog dialog = new TextInputDialog();
 //        dialog.setTitle("Input Dialog");
 //        dialog.setHeaderText("Enter a word:");
@@ -58,19 +96,19 @@ public class HangmanController {
 //        Optional<String> wordDialog = dialog.showAndWait();
 //        String word = wordDialog.orElse("");
         // TODO temporary word
-        String word = "te st";
+        String word = "Waiting...";
 
         wordText.setText(word.toUpperCase());
 
-        StringBuilder secretWord = new StringBuilder();
-        for (int i = 0; i < word.length(); i++) {
-            if (word.charAt(i) == ' ') {
-                secretWord.append(" ");
-            } else {
-                secretWord.append("*");
-            }
-        }
-        guessedWordText.setText(secretWord.toString());
+//        StringBuilder secretWord = new StringBuilder();
+//        for (int i = 0; i < word.length(); i++) {
+//            if (word.charAt(i) == ' ') {
+//                secretWord.append(" ");
+//            } else {
+//                secretWord.append("*");
+//            }
+//        }
+        guessedWordText.setText(word.toString());
     }
 
     @FXML
@@ -191,5 +229,87 @@ public class HangmanController {
         stage.setTitle("Documentation");
         stage.setScene(new Scene(root, 600, 600));
         stage.show();
+    }
+
+    public void closeEverything(Socket socket, BufferedReader bufferedReader, BufferedWriter bufferedWriter) {
+        try {
+            if (bufferedReader != null) {
+                bufferedReader.close();
+            }
+            if (bufferedWriter != null) {
+                bufferedWriter.close();
+            }
+            if (socket != null) {
+                socket.close();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendMessage(){
+        new Thread(() -> {
+            try{
+                bufferedWriter.write(username);
+                bufferedWriter.newLine();
+                bufferedWriter.flush();
+
+                Scanner scanner = new Scanner(System.in);
+                while (socket.isConnected()){
+                    String messageToSend = scanner.nextLine();
+
+                }
+            }catch (IOException e){
+                closeEverything(socket, bufferedReader,bufferedWriter);
+            }
+        }).start();
+    }
+
+    public void sendConnectedMessage(){
+        try{
+            bufferedWriter.write("connSend");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+        }catch (IOException e){
+            closeEverything(socket, bufferedReader,bufferedWriter);
+        }
+    }
+
+    private void processConnection() throws IOException {
+        if (!isConn) {
+            sendConnectedMessage();
+            isConn = true;
+        }
+    }
+
+    public void listenForMessage() {
+
+        new Thread(() -> {
+            String messageFromGroup;
+            while (socket.isConnected()){
+                try{
+                    messageFromGroup = bufferedReader.readLine();
+
+                    String temp;
+                    switch (messageFromGroup) {
+                        case "conn":
+                            sendConnectedMessage();
+                            break;
+
+                        case "connSend":
+                            processConnection();
+                            break;
+
+                        default:
+                            System.out.println(messageFromGroup);
+                            break;
+                    }
+
+                }catch (IOException e){
+                    closeEverything(socket, bufferedReader,bufferedWriter);
+                }
+            }
+        }).start();
     }
 }
