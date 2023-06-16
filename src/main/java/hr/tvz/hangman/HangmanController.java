@@ -1,6 +1,8 @@
 package hr.tvz.hangman;
 
+import hr.tvz.hangman.rmi.ChatMessage;
 import hr.tvz.hangman.model.GameState;
+import hr.tvz.hangman.rmi.RemoteService;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +17,8 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.net.Socket;
+import java.rmi.RemoteException;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
@@ -37,26 +41,67 @@ public class HangmanController {
     @FXML
     private TextField letterField;
     @FXML
+    private Button submitButton;
+    @FXML
     private Text livesText;
     @FXML
-    public static TextArea chatArea;
+    public TextArea chatArea;
     @FXML
-    public static TextField messageField;
+    public TextField messageField;
     private Socket socket;
 
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
-    private static String username = "Player 1";
+    private static String username;
     @FXML
     private Label usernameLabel;
     private static Boolean isConn = false;
+    @FXML
+    private TextField setWordField;
+
+    private RemoteService service;
+    @FXML
+    private Button sendMsgButton;
 
 
     public void initialize() {
-        newGame();
-        new Thread(() -> startClientThread()).start();
+
+
+
+        gameOver = false;
+        lives = MAX_LIVES;
+        livesText.setText(lives.toString());
+
+        letterField.setVisible(true);
+        submitButton.setVisible(true);
+
+        imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
+
+        String word = "Waiting...";
+
+        wordText.setText(word.toUpperCase());
+        guessedWordText.setText(word.toString());
+
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Input Dialog");
+        dialog.setHeaderText("Enter username:");
+
+        Optional<String> usernameOptional = dialog.showAndWait();
+        username = usernameOptional.orElse("");
 
         usernameLabel.setText(username);
+
+        new Thread(() -> startClientThread()).start();
+
+//        Registry registry = null;
+//        try {
+//            registry = LocateRegistry.getRegistry("localhost", 1746);
+//            service = (RemoteService) registry.lookup(RemoteService.REMOTE_OBJECT_NAME);
+//        } catch (RemoteException | NotBoundException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        new Thread(new RefreshChatMessagesThread(chatArea)).start();
     }
 
     private void startClientThread() {
@@ -74,68 +119,52 @@ public class HangmanController {
         }
     }
 
+    public void sendChatMessage() throws RemoteException {
+        String chatMessageString = messageField.getText();
+        ChatMessage newChatMessage = new ChatMessage(
+                username,
+                LocalDateTime.now(),
+                chatMessageString);
+        service.sendMessage(newChatMessage);
+        messageField.setText("");
+    }
+
     public void newGame() {
+        try {
+            bufferedWriter.write("newGame");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+        } catch (IOException e){
+            closeEverything(socket, bufferedReader, bufferedWriter);
+        }
+
         gameOver = false;
         lives = MAX_LIVES;
         livesText.setText(lives.toString());
 
+        letterField.setVisible(true);
+        submitButton.setVisible(true);
+
         imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
 
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Input Dialog");
-        dialog.setHeaderText("Enter username:");
-
-        Optional<String> usernameOptional = dialog.showAndWait();
-        username = usernameOptional.orElse("");
-
-//        TextInputDialog dialog = new TextInputDialog();
-//        dialog.setTitle("Input Dialog");
-//        dialog.setHeaderText("Enter a word:");
-//        dialog.setContentText("Word:");
-//
-//        Optional<String> wordDialog = dialog.showAndWait();
-//        String word = wordDialog.orElse("");
-        // TODO temporary word
         String word = "Waiting...";
 
         wordText.setText(word.toUpperCase());
-
-//        StringBuilder secretWord = new StringBuilder();
-//        for (int i = 0; i < word.length(); i++) {
-//            if (word.charAt(i) == ' ') {
-//                secretWord.append(" ");
-//            } else {
-//                secretWord.append("*");
-//            }
-//        }
         guessedWordText.setText(word.toString());
+
+        setWordField.setVisible(true);
     }
 
-    @FXML
-    public void enterLetter(ActionEvent event) {
-        if (letterField.getText().isEmpty()) return;
-
-        if (!gameOver) {
-            checkLetter();
-            checkWin();
-        }
-
-        if (lives == 0) {
-            gameOver = true;
-            showConfirmation("You lost!", "Start a new game?");
-        }
-        letterField.clear();
-    }
-
-    public void checkLetter() {
-
-        if (letterField.getText().length() != 1) {
+    public void checkLetter(String enteredLetter) {
+        System.out.println(enteredLetter + " in checkLetter");
+        if (enteredLetter.length() != 1) {
             showMessage("You can enter 1 letter only!", "");
             letterField.clear();
             return;
         }
 
-        char letter = letterField.getText().toUpperCase().charAt(0);
+        char letter = enteredLetter.toUpperCase().charAt(0);
         String word = wordText.getText();
 
         if (guessedWordText.getText().indexOf(letter) != -1) {
@@ -189,6 +218,14 @@ public class HangmanController {
 
     public void loadGame() {
         try {
+            bufferedWriter.write("loadGame");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException e){
+            closeEverything(socket, bufferedReader, bufferedWriter);
+        }
+
+        try {
             ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_GAME_FILE_NAME));
             if (ois.readObject() instanceof GameState gs) {
                 gameOver = gs.getGameOver();
@@ -198,7 +235,6 @@ public class HangmanController {
                 imageView.setImage(
                         new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
             }
-            showMessage("Game loaded!", "");
         } catch (IOException | ClassNotFoundException e) {
             showMessage("Error :(", "");
             throw new RuntimeException(e);
@@ -206,11 +242,13 @@ public class HangmanController {
     }
 
     public void showMessage(String header, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Info");
-        alert.setHeaderText(header);
-        alert.setContentText(content);
-        alert.showAndWait();
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Info");
+            alert.setHeaderText(header);
+            alert.setContentText(content);
+            alert.showAndWait();
+        });
     }
 
     public void showConfirmation(String header, String content) {
@@ -260,26 +298,95 @@ public class HangmanController {
 
                 }
             }catch (IOException e){
-                closeEverything(socket, bufferedReader,bufferedWriter);
+                closeEverything(socket, bufferedReader, bufferedWriter);
             }
         }).start();
     }
 
-    public void sendConnectedMessage(){
-        try{
+    public void sendConnectedMessage() {
+        try {
             bufferedWriter.write("connSend");
             bufferedWriter.newLine();
             bufferedWriter.flush();
-
-        }catch (IOException e){
-            closeEverything(socket, bufferedReader,bufferedWriter);
+        } catch (IOException e) {
+            closeEverything(socket, bufferedReader, bufferedWriter);
         }
     }
 
-    private void processConnection() throws IOException {
+    private void handleConnection() throws IOException {
         if (!isConn) {
-            sendConnectedMessage();
             isConn = true;
+            sendConnectedMessage();
+        }
+    }
+
+    private void handleEnteredWord() throws IOException {
+        setWordField.setVisible(false);
+
+        var enteredWordTemp = bufferedReader.readLine();
+        StringBuilder secretWord = new StringBuilder();
+        for (int i = 0; i < enteredWordTemp.length(); i++) {
+            if (enteredWordTemp.charAt(i) == ' ') {
+                secretWord.append(" ");
+            } else {
+                secretWord.append("*");
+            }
+        }
+        wordText.setText(enteredWordTemp.toUpperCase());
+        guessedWordText.setText(secretWord.toString().toUpperCase());
+    }
+
+    private void handleEnteredLetter() throws IOException {
+        var enteredLetterTemp = bufferedReader.readLine();
+        if (enteredLetterTemp.isEmpty()) return;
+
+        if (!gameOver) {
+            checkLetter(enteredLetterTemp);
+            checkWin();
+        }
+
+        if (lives == 0) {
+            gameOver = true;
+            showConfirmation("You lost!", "Start a new game?");
+        }
+
+        System.out.println(enteredLetterTemp + " in handleEnteredLetter()");
+
+        letterField.clear();
+    }
+
+    private void handleNewGame() {
+        gameOver = false;
+        lives = MAX_LIVES;
+        livesText.setText(lives.toString());
+
+        letterField.setVisible(true);
+        submitButton.setVisible(true);
+
+        imageView.setImage(new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
+
+        String word = "Waiting...";
+
+        wordText.setText(word.toUpperCase());
+        guessedWordText.setText(word.toString());
+
+        setWordField.setVisible(true);
+    }
+
+    private void handleLoadGame() {
+        try {
+            ObjectInputStream ois = new ObjectInputStream(new FileInputStream(SAVE_GAME_FILE_NAME));
+            if (ois.readObject() instanceof GameState gs) {
+                gameOver = gs.getGameOver();
+                lives = gs.getLives();
+                livesText.setText(lives.toString());
+                guessedWordText.setText(gs.getGuessedWord());
+                imageView.setImage(
+                        new Image(getClass().getResourceAsStream("/hr/tvz/hangman/img/" + lives + ".png")));
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            showMessage("Error :(", "");
+            throw new RuntimeException(e);
         }
     }
 
@@ -298,7 +405,23 @@ public class HangmanController {
                             break;
 
                         case "connSend":
-                            processConnection();
+                            handleConnection();
+                            break;
+
+                        case "enteredWord":
+                            handleEnteredWord();
+                            break;
+
+                        case "enteredLetter":
+                            handleEnteredLetter();
+                            break;
+
+                        case "newGame":
+                            handleNewGame();
+                            break;
+
+                        case "loadGame":
+                            handleLoadGame();
                             break;
 
                         default:
@@ -307,9 +430,67 @@ public class HangmanController {
                     }
 
                 }catch (IOException e){
-                    closeEverything(socket, bufferedReader,bufferedWriter);
+                    closeEverything(socket, bufferedReader, bufferedWriter);
                 }
             }
         }).start();
+    }
+
+    public void enterWord() {
+        StringBuilder secretWord = new StringBuilder();
+        for (int i = 0; i < setWordField.getText().length(); i++) {
+            if (setWordField.getText().charAt(i) == ' ') {
+                secretWord.append(" ");
+            } else {
+                secretWord.append("*");
+            }
+        }
+        wordText.setText(setWordField.getText().toUpperCase());
+        guessedWordText.setText(secretWord.toString().toUpperCase());
+
+        try {
+            bufferedWriter.write("enteredWord");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            bufferedWriter.write(setWordField.getText().toUpperCase());
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+
+        } catch (IOException e){
+            closeEverything(socket, bufferedReader, bufferedWriter);
+        }
+        setWordField.clear();
+
+        letterField.setVisible(false);
+        submitButton.setVisible(false);
+        setWordField.setVisible(false);
+    }
+
+    public void enterLetter() {
+        if (letterField.getText().isEmpty()) return;
+
+        try {
+            bufferedWriter.write("enteredLetter");
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+            bufferedWriter.write(letterField.getText().toUpperCase());
+            bufferedWriter.newLine();
+            bufferedWriter.flush();
+        } catch (IOException e){
+            closeEverything(socket, bufferedReader, bufferedWriter);
+        }
+
+        if (!gameOver) {
+            checkLetter(letterField.getText().toString());
+            checkWin();
+        }
+
+        System.out.println(letterField.getText() + " in enterLetter()");
+
+        if (lives == 0) {
+            gameOver = true;
+            showConfirmation("You lost!", "Start a new game?");
+        }
+        letterField.clear();
     }
 }

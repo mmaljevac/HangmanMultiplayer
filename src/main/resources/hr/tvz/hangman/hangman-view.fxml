@@ -129,5 +129,11 @@
             <Font size="24.0" />
          </font>
       </Label>
+      <Button fx:id="sendMsgButton" layoutX="983.0" layoutY="740.0" mnemonicParsing="false" onAction="#sendChatMessage" text="Button" />
+      <TextField fx:id="setWordField" layoutX="476.0" layoutY="661.0" onAction="#enterWord">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextField>
    </children>
 </AnchorPane>
