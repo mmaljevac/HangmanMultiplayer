@@ -2,9 +2,11 @@
 
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.effect.InnerShadow?>
 <?import javafx.scene.image.Image?>
@@ -16,15 +18,15 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.tvz.hangman.HangmanController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="hr.tvz.hangman.HangmanController">
    <children>
-      <ImageView fitHeight="800.0" fitWidth="1200.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="715.0" fitWidth="1000.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@img/background.png" />
          </image>
       </ImageView>
 <!--      <fx:include source="menu.fxml" />-->
-      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1200.0">
+      <MenuBar layoutY="2.0" prefHeight="25.0" prefWidth="1000.0">
         <menus>
           <Menu mnemonicParsing="false" text="New game">
             <items>
@@ -44,7 +46,7 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Text layoutX="463.0" layoutY="159.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" text="Hangman" textAlignment="CENTER">
+      <Text layoutX="287.0" layoutY="157.0" strokeLineCap="ROUND" strokeLineJoin="ROUND" strokeType="OUTSIDE" strokeWidth="2.0" text="Hangman" textAlignment="CENTER">
          <font>
             <Font name="Centaur" size="75.0" />
          </font>
@@ -65,18 +67,18 @@
             </LinearGradient>
          </stroke>
       </Text>
-      <ImageView fx:id="imageView" fitHeight="500.0" fitWidth="500.0" layoutX="98.0" layoutY="150.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="imageView" fitHeight="500.0" fitWidth="500.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@img/6.png" />
          </image></ImageView>
-      <Button fx:id="submitButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="679.0" layoutY="488.0" mnemonicParsing="false" onAction="#enterLetter" prefHeight="65.0" prefWidth="199.0" text="Check">
+      <Button fx:id="submitButton" alignment="CENTER" contentDisplay="CENTER" defaultButton="true" layoutX="421.0" layoutY="460.0" mnemonicParsing="false" onAction="#enterLetter" prefHeight="65.0" prefWidth="199.0" text="Check">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
          <cursor>
             <Cursor fx:constant="HAND" />
          </cursor></Button>
-      <TextField fx:id="letterField" alignment="CENTER" layoutX="795.0" layoutY="364.0" onAction="#enterLetter" prefHeight="72.0" prefWidth="72.0" promptText="_">
+      <TextField fx:id="letterField" alignment="CENTER" layoutX="547.0" layoutY="352.0" onAction="#enterLetter" prefHeight="72.0" prefWidth="72.0" promptText="_">
          <font>
             <Font size="34.0" />
          </font>
@@ -91,30 +93,52 @@
             </InnerShadow>
          </effect>
       </TextField>
-      <Text layoutX="675.0" layoutY="415.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Letter:" wrappingWidth="116.0">
+      <Text fx:id="letterLabel" layoutX="421.0" layoutY="401.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Letter:" wrappingWidth="116.0">
          <font>
             <Font size="32.0" />
          </font>
       </Text>
-      <Text fx:id="wordText" layoutX="563.0" layoutY="753.0" strokeType="OUTSIDE" strokeWidth="0.0" text="word" textAlignment="CENTER">
+      <Text fx:id="wordText" layoutX="37.0" layoutY="670.0" strokeType="OUTSIDE" strokeWidth="0.0" text="word" textAlignment="CENTER">
          <font>
             <Font size="31.0" />
          </font>
       </Text>
-      <Text fx:id="guessedWordText" layoutX="679.0" layoutY="295.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="__secretWordText__">
+      <Text fx:id="guessedWordText" layoutX="421.0" layoutY="281.0" stroke="BLACK" strokeType="OUTSIDE" strokeWidth="0.0" text="Waiting...">
          <font>
             <Font size="31.0" />
          </font>
       </Text>
-      <Text fx:id="livesText" layoutX="319.0" layoutY="619.0" strokeType="OUTSIDE" strokeWidth="0.0" text="lives">
+      <Text fx:id="livesText" layoutX="212.0" layoutY="617.0" strokeType="OUTSIDE" strokeWidth="0.0" text="lives">
          <font>
             <Font size="30.0" />
          </font>
       </Text>
-      <Text layoutX="235.0" layoutY="618.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lives:">
+      <Text layoutX="130.0" layoutY="618.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Lives:">
          <font>
             <Font size="30.0" />
          </font>
       </Text>
+      <TextField fx:id="messageField" layoutX="716.0" layoutY="570.0" onAction="#sendChatMessage" prefHeight="30.0" prefWidth="245.0">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </TextField>
+      <TextArea fx:id="chatArea" editable="false" layoutX="716.0" layoutY="70.0" prefHeight="487.0" prefWidth="245.0" />
+      <Label fx:id="usernameLabel" layoutX="37.0" layoutY="58.0" text="PlayerName">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Button fx:id="sendMsgButton" layoutX="817.0" layoutY="612.0" mnemonicParsing="false" onAction="#sendChatMessage" text="Send" />
+      <TextField fx:id="setWordField" layoutX="388.0" layoutY="619.0" onAction="#enterWord">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </TextField>
+      <Label fx:id="wordToGuessLabel" layoutX="423.0" layoutY="579.0" text="Word to guess:">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
