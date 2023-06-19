@@ -3,9 +3,10 @@ package hr.tvz.hangman.networking;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler implements Runnable {
-    public static ArrayList<ClientHandler> clientHandlers = new ArrayList<>();
+    public static List<ClientHandler> clientHandlers = new ArrayList<>();
     private Socket socket;
     private BufferedReader bufferedReader;
     private BufferedWriter bufferedWriter;
@@ -43,7 +44,6 @@ public class ClientHandler implements Runnable {
     public void broadcastMessage(String messageToSend) {
         for (ClientHandler clientHandler : clientHandlers) {
             try {
-                //TODO remove true
                 if (!clientHandler.username.equals(username)) {
                     clientHandler.bufferedWriter.write(messageToSend);
                     clientHandler.bufferedWriter.newLine();

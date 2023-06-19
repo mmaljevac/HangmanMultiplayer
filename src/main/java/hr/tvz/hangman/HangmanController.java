@@ -102,15 +102,15 @@ public class HangmanController {
 
         new Thread(() -> startClientThread()).start();
 
-//        Registry registry = null;
-//        try {
-//            registry = LocateRegistry.getRegistry("localhost", 1746);
-//            service = (RemoteService) registry.lookup(RemoteService.REMOTE_OBJECT_NAME);
-//        } catch (RemoteException | NotBoundException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        new Thread(new RefreshChatMessagesThread(chatArea)).start();
+        Registry registry = null;
+        try {
+            registry = LocateRegistry.getRegistry("localhost", 1746);
+            service = (RemoteService) registry.lookup(RemoteService.REMOTE_OBJECT_NAME);
+        } catch (RemoteException | NotBoundException e) {
+            throw new RuntimeException(e);
+        }
+
+        new Thread(new RefreshChatMessagesThread(chatArea)).start();
     }
 
     private void startClientThread() {
@@ -416,8 +416,8 @@ public class HangmanController {
                 try{
                     messageFromGroup = bufferedReader.readLine();
 
-                    String temp;
                     switch (messageFromGroup) {
+
                         case "conn":
                             sendConnectedMessage();
                             break;
